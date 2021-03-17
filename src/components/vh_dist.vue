@@ -1,0 +1,136 @@
+<template>
+    <div class="row dist">
+        <div class="col-6" v-if="lang!='en'">
+            <select class="city" :class="getClasses" @change="change(index)" v-model="index">
+                <option v-for="(item,index) in options" :key="index" :value="index">{{show(p_lang, item)}}</option>
+            </select>
+            <label v-if="styles=='underline'">縣市</label>
+        </div>
+        <div class="col-6">
+            <select class="dist" :class="getClasses" v-model="sub_index">
+                <option v-for="(sub_item,sub_index) in districts" :key="sub_index" :value="sub_index">{{show(p_lang, sub_item)}}</option>
+            </select>
+            <label v-if="styles=='underline'">區</label>
+            <input type="hidden" :id="returnId" :name="returnId" :value="result" />
+            <input type="hidden" :id="returnJson" :name="returnJson" :value="resultJson" />
+
+        </div>
+        <div class="col-6" v-if="lang=='en'">
+            <select class="city" :class="getClasses" @change="change(index)" v-model="index">
+                <option v-for="(item,index) in options" :key="index" :value="index">{{show(p_lang, item)}}</option>
+            </select>
+          <label v-if="styles=='underline'">縣市</label>
+        </div>
+    </div>
+</template>
+
+<script>
+import hkJson from '../assets/hk.json'
+import twJson from '../assets/tw.json'
+export default {
+  name: 'vue-district',
+  props: {
+    name: {
+      type: String,
+      required: true
+    },
+    countryCode: {
+      type: String
+    },
+    lang: {
+      type: String
+    },
+    styles: {
+      type: String
+    },
+    size: {
+      type: String
+    }
+  },
+  data () {
+    return {
+      p_countryCode: 'zh-hk',
+      p_lang: 'zh',
+      index: 0,
+      sub_index: 0,
+      options: [],
+      districts: []
+    }
+  },
+  created () {
+    this.p_countryCode = this.countryCode || this.p_countryCode
+    this.p_lang = this.lang || this.p_lang
+    switch (this.p_countryCode) {
+      case 'zh-tw':
+        this.options = twJson
+        break
+      case 'zh-hk':
+        this.options = hkJson
+        break
+    }
+    this.districts = this.options[0].districts
+  },
+  methods: {
+    show (_lang, item) {
+      switch (_lang) {
+        case 'zh':
+          return item.zh
+        case 'en':
+          return item.en
+      }
+    },
+    change () {
+      this.sub_index = 0
+      this.districts = this.options[this.index].districts
+    }
+  },
+  computed: {
+    result () {
+      let str = ''
+      let a = [this.show('zh', this.options[this.index]), this.show('zh', this.districts[this.sub_index])]
+      let sep = ''
+      if (this.p_lang === 'en') {
+        sep = ','
+        a = a.reverse()
+      }
+      str = a.join(sep)
+      return str
+    },
+    resultJson () {
+      let str = ''
+      str = JSON.stringify({
+        zh: {
+          'city': this.show('zh', this.options[this.index]),
+          'dist': this.show('zh', this.districts[this.sub_index])
+        },
+        en: {
+          'city': this.show('en', this.options[this.index]),
+          'dist': this.show('en', this.districts[this.sub_index])
+        }
+      })
+
+      this.$emit('return', str)
+
+      return str
+    },
+    getClasses () {
+      let a = ['form-control']
+      if (this.size === 'lg') a.push('form-control-lg')
+      if (this.size === 'sm') a.push('form-control-sm')
+      return a.join(' ')
+    },
+    returnId () {
+      return this.name + '_dist'
+    },
+    returnJson () {
+      return this.name + '_dist_json'
+    }
+  }
+}
+</script>
+
+<style>
+.dist select.form-control{
+  color:#424a51c2;
+}
+</style>
