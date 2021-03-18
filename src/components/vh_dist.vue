@@ -12,8 +12,6 @@
             </select>
             <label v-if="styles=='underline'">區</label>
             <input type="hidden" :id="returnId" :name="returnId" :value="result" />
-            <input type="hidden" :id="returnJson" :name="returnJson" :value="resultJson" />
-
         </div>
         <div class="col-6" v-if="lang=='en'">
             <select class="city" :class="getClasses" @change="change(index)" v-model="index">
@@ -45,6 +43,9 @@ export default {
     },
     size: {
       type: String
+    },
+    json: {
+      type: Boolean
     }
   },
   data () {
@@ -87,27 +88,26 @@ export default {
   computed: {
     result () {
       let str = ''
-      let a = [this.show('zh', this.options[this.index]), this.show('zh', this.districts[this.sub_index])]
-      let sep = ''
-      if (this.p_lang === 'en') {
-        sep = ','
-        a = a.reverse()
-      }
-      str = a.join(sep)
-      return str
-    },
-    resultJson () {
-      let str = ''
-      str = JSON.stringify({
-        zh: {
-          'city': this.show('zh', this.options[this.index]),
-          'dist': this.show('zh', this.districts[this.sub_index])
-        },
-        en: {
-          'city': this.show('en', this.options[this.index]),
-          'dist': this.show('en', this.districts[this.sub_index])
+      if (this.json) {
+        str = JSON.stringify({
+          zh: {
+            'city': this.show('zh', this.options[this.index]),
+            'dist': this.show('zh', this.districts[this.sub_index])
+          },
+          en: {
+            'city': this.show('en', this.options[this.index]),
+            'dist': this.show('en', this.districts[this.sub_index])
+          }
+        })
+      } else {
+        let a = [this.show('zh', this.options[this.index]), this.show('zh', this.districts[this.sub_index])]
+        let sep = ''
+        if (this.p_lang === 'en') {
+          sep = ','
+          a = a.reverse()
         }
-      })
+        str = a.join(sep)
+      }
 
       this.$emit('return', str)
 
@@ -121,9 +121,6 @@ export default {
     },
     returnId () {
       return this.name + '_dist'
-    },
-    returnJson () {
-      return this.name + '_dist_json'
     }
   }
 }

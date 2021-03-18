@@ -4,7 +4,7 @@
         <div class="row s1" v-if="p_countryCode=='zh-hk'">
             <label class="col-3 col-md-2 col-form-label" :class="size" v-if="p_styles=='heading'">{{p_heading.zone}}</label>
             <div :class="{'col-9 col-md-10':p_styles=='heading', 'col-12':p_styles!='heading'}">
-                <District :name="name" :size="size" countryCode="zh-hk" :lang="lang" :styles="styles" v-on:return="getDist"></District>
+                <District :name="name" :size="size" countryCode="zh-hk" :lang="lang" :styles="styles" v-on:return="getDist" json></District>
             </div>
         </div>
         <div class="row s1" v-if="p_countryCode=='zh-hk' && p_styles=='heading'">
@@ -33,7 +33,7 @@
         <div class="row s1" v-if="p_countryCode=='zh-hk' && p_lang=='en' && false">
           <label class="col-2 col-form-label" :class="size" v-if="p_styles=='heading'">{{p_heading.zone}}</label>
           <div class="col-10">
-            <District :name="name" :size="size" countryCode="zh-hk" :lang="lang" :styles="styles" v-on:return="getDist"></District>
+            <District :name="name" :size="size" countryCode="zh-hk" :lang="lang" :styles="styles" v-on:return="getDist" json></District>
           </div>
         </div>
 
@@ -41,7 +41,7 @@
        <div class="row s1" v-if="p_countryCode=='zh-tw'">
             <label class="col-2 col-form-label" :class="size" v-if="p_styles=='heading'">{{p_heading.zone}}</label>
             <div :class="{'col-10':p_styles=='heading', 'col-12':p_styles!='heading'}">
-                <District :name="name" :size="size" countryCode="zh-tw" :lang="lang" :styles="styles" v-on:return="getDist"></District>
+                <District :name="name" :size="size" countryCode="zh-tw" :lang="lang" :styles="styles" v-on:return="getDist" json></District>
             </div>
         </div>
         <div class="row s1" v-if="p_countryCode=='zh-tw' && p_styles=='heading'">
@@ -73,7 +73,7 @@
         <div class="row s1" v-if="p_countryCode=='zh-tw' && p_lang=='en' && false">
           <label class="col-2 col-form-label" :class="size" v-if="p_styles=='heading'">{{p_heading.zone}}</label>
           <div class="col-10">
-            <District :name="name" :size="size" countryCode="zh-tw" :lang="lang" :styles="styles" v-on:return="getDist"></District>
+            <District :name="name" :size="size" countryCode="zh-tw" :lang="lang" :styles="styles" v-on:return="getDist" json></District>
           </div>
         </div>
 
@@ -149,7 +149,7 @@ export default {
   },
   methods: {
     isEn (v) {
-      let regex = /^[\w ]*$/i
+      let regex = /^[\w. ]*$/i
       let matches = regex.exec(v)
       if (matches === null) return false
       return (matches[0] === matches['input'])
@@ -194,17 +194,25 @@ export default {
       }
       let str = ''
       let a = [this.p_address.city, this.p_address.dist]
+      let b = {'city': this.p_address.city, 'dist': this.p_address.dist}
       let _heading = this.getHeading(this.p_countryCode, (en ? 'en' : 'zh'))
       for (let i = 0; i < _arr.length; i++) {
+        b[_arr[i]] = this.p_address[_arr[i]]
         if (this.p_address[_arr[i]]) a.push(this.writing(en, (_arr[i] === 'street') ? '' : _heading[_arr[i]], this.p_address[_arr[i]]))
       }
-      let sep = ''
-      if (en) {
-        sep = ','
-        a = a.reverse()
-      }
-      str = a.join(sep)
 
+      if (this.json) {
+        str = JSON.stringify(b)
+      } else {
+        let sep = ''
+        if (en) {
+          sep = ','
+          a = a.reverse()
+        }
+        str = a.join(sep)
+      }
+
+      this.$emit('return', str)
       return str
     }
   }

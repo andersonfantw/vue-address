@@ -1,6 +1,6 @@
 {
   "name": "@cuby/vue-address",
-  "version": "0.1.29",
+  "version": "0.1.31",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -14,7 +14,6 @@
     "src",
     "public"
   ],
-  "style": "./dist/vue-address.css",
   "dependencies": {
     "core-js": "^3.6.5",
     "vue": "^2.6.11"
@@ -30,7 +29,7 @@
     "sass-loader": "^8.0.2",
     "vue-template-compiler": "^2.6.11"
   },
-  "description": "## Project setup ``` npm install ```",
+  "description": "## Project setup ``` npm i @cuby/vue-address ```",
   "keywords": [
     "address"
   ],
