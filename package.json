@@ -1,20 +1,21 @@
 {
   "name": "@cuby/vue-address",
-  "version": "0.1.31",
+  "version": "0.1.32",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build --target lib --name vue-address ./src/plugin.js",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint",
+    "test": "vue-cli-service test:unit"
   },
   "main": "./dist/vue-address.common.js",
   "unpkg": "./dist/vue-address.umd.min.js",
   "files": [
-    "dist",
-    "src",
-    "public"
+    "dist"
   ],
   "dependencies": {
+    "@vue/cli-plugin-unit-jest": "^4.5.12",
+    "@vue/test-utils": "^1.1.3",
     "core-js": "^3.6.5",
     "vue": "^2.6.11"
   },

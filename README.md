@@ -164,6 +164,16 @@ block: 輸入框名稱位於輸入框的提示語中
 <vue-district name="dist" v-on:return="getDist"></vue-district>
 ```
 
+## value
+
+```html
+
+設定地址
+
+<vue-address name="address" class="no-gutters" size="lg" styles="block" countryCode="zh-tw" json value='{"city":"香港","dist":"香港仔","street":"港灣道12號","building":"灣仔政府大樓","floor":"","block":"","room":""}'></vue-address>
+<vue-district name="dist" value="香港,香港仔"></vue-district>
+```
+
 ## Keywords
 
 HongKong Address, Taiwan Address

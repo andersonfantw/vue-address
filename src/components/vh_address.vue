@@ -1,10 +1,13 @@
 <template>
     <section class="address">
+        <div class="col-12" v-if="p_msg!=''">
+          <div class="alert alert-danger" role="alert">{{p_msg}}</div>
+        </div>
         <!-- hk format start -->
         <div class="row s1" v-if="p_countryCode=='zh-hk'">
             <label class="col-3 col-md-2 col-form-label" :class="size" v-if="p_styles=='heading'">{{p_heading.zone}}</label>
             <div :class="{'col-9 col-md-10':p_styles=='heading', 'col-12':p_styles!='heading'}">
-                <District :name="name" :size="size" countryCode="zh-hk" :lang="lang" :styles="styles" v-on:return="getDist" json></District>
+                <District :name="name" :size="size" countryCode="zh-hk" :lang="lang" :styles="styles" v-on:return="getDist" :value="p_dist_value" json></District>
             </div>
         </div>
         <div class="row s1" v-if="p_countryCode=='zh-hk' && p_styles=='heading'">
@@ -33,7 +36,7 @@
         <div class="row s1" v-if="p_countryCode=='zh-hk' && p_lang=='en' && false">
           <label class="col-2 col-form-label" :class="size" v-if="p_styles=='heading'">{{p_heading.zone}}</label>
           <div class="col-10">
-            <District :name="name" :size="size" countryCode="zh-hk" :lang="lang" :styles="styles" v-on:return="getDist" json></District>
+            <District :name="name" :size="size" countryCode="zh-hk" :lang="lang" :styles="styles" v-on:return="getDist" :value="p_dist_value" json></District>
           </div>
         </div>
 
@@ -41,7 +44,7 @@
        <div class="row s1" v-if="p_countryCode=='zh-tw'">
             <label class="col-2 col-form-label" :class="size" v-if="p_styles=='heading'">{{p_heading.zone}}</label>
             <div :class="{'col-10':p_styles=='heading', 'col-12':p_styles!='heading'}">
-                <District :name="name" :size="size" countryCode="zh-tw" :lang="lang" :styles="styles" v-on:return="getDist" json></District>
+                <District :name="name" :size="size" countryCode="zh-tw" :lang="lang" :styles="styles" v-on:return="getDist" :value="p_dist_value" json></District>
             </div>
         </div>
         <div class="row s1" v-if="p_countryCode=='zh-tw' && p_styles=='heading'">
@@ -73,7 +76,7 @@
         <div class="row s1" v-if="p_countryCode=='zh-tw' && p_lang=='en' && false">
           <label class="col-2 col-form-label" :class="size" v-if="p_styles=='heading'">{{p_heading.zone}}</label>
           <div class="col-10">
-            <District :name="name" :size="size" countryCode="zh-tw" :lang="lang" :styles="styles" v-on:return="getDist" json></District>
+            <District :name="name" :size="size" countryCode="zh-tw" :lang="lang" :styles="styles" v-on:return="getDist" :value="p_dist_value" json></District>
           </div>
         </div>
 
@@ -108,6 +111,9 @@ export default {
     },
     json: {
       type: Boolean
+    },
+    value: {
+      type: String
     }
   },
   data () {
@@ -117,7 +123,9 @@ export default {
       p_styles: 'block',
       p_address: {},
       p_dist_json: '',
-      p_heading: ''
+      p_heading: '',
+      p_msg: '',
+      p_dist_value: ''
     }
   },
   created () {
@@ -126,6 +134,19 @@ export default {
     this.p_styles = this.styles || this.p_styles
     this.p_heading = this.getHeading(this.p_countryCode, this.p_lang)
     this.p_address = this.getAddressStruct(this.p_countryCode)
+
+    if( this.value ){
+      let o = this.tryParseJSON(this.value);
+      let _this = this
+      if (o === false) this.p_msg = 'invalid address format. expect json give in.'
+      Object.keys(this.p_address).forEach((k)=>{
+        if ( Object.prototype.hasOwnProperty.call(o, k) ) this.p_address[k] = o[k]
+        else _this.p_msg = 'incorrect address format, missing '+k+'.'
+      })
+      if ( Object.prototype.hasOwnProperty.call(o, 'city') 
+            && Object.prototype.hasOwnProperty.call(o, 'dist') ) this.p_dist_value = o.city + ',' + o.dist
+      else this.p_msg = 'invalid address format. missing city or dist.'
+    }
   },
   computed: {
     result () {
@@ -173,8 +194,8 @@ export default {
     writing (_en, _heading, _val) {
       return (_en) ? _heading + ' ' + _val : _val + _heading
     },
-    getDist (v) {
-      this.p_dist_json = v
+    getDist ( _v ) {
+      this.p_dist_json = _v
     },
     process (_arr) {
       let _this = this
@@ -214,6 +235,18 @@ export default {
 
       this.$emit('return', str)
       return str
+    },
+    tryParseJSON ( _json ) {
+      try {
+          var o = JSON.parse( _json );
+          if (o && typeof o === "object") {
+              return o;
+          }
+      }
+      catch (e) {
+        console.log(e)
+      }
+      return false;
     }
   }
 }
