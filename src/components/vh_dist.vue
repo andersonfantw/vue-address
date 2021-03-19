@@ -111,8 +111,8 @@ export default {
       }
     },
     change () {
-      this.sub_index = 0
-      this.districts = this.options[this.index].districts
+      this.selected_dist_id = 0
+      this.districts = this.options[this.selected_city_id].districts
     }
   },
   computed: {
