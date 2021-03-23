@@ -4,21 +4,21 @@
           <div class="alert alert-danger" role="alert">{{p_msg}}</div>
         </div>
         <div class="col-6" v-if="lang!='en'">
-            <select class="city" :class="getClasses" @change="change(index)" v-model="selected_city_id">
-                <option v-for="(item,index) in options" :key="index" :value="index">{{show(p_lang, item)}}</option>
+            <select class="city" :class="getClasses" @change="change(selected_city_id)" v-model="selected_city_id">
+                <option v-for="(item,selected_city_id) in options" :key="selected_city_id" :value="selected_city_id">{{show(p_lang, item)}}</option>
             </select>
             <label v-if="styles=='underline'">縣市</label>
         </div>
         <div class="col-6">
             <select class="dist" :class="getClasses" v-model="selected_dist_id">
-                <option v-for="(sub_item,sub_index) in districts" :key="sub_index" :value="sub_index">{{show(p_lang, sub_item)}}</option>
+                <option v-for="(sub_item,selected_dist_id) in districts" :key="selected_dist_id" :value="selected_dist_id">{{show(p_lang, sub_item)}}</option>
             </select>
             <label v-if="styles=='underline'">區</label>
             <input type="hidden" :id="returnId" :name="returnId" :value="result" />
         </div>
         <div class="col-6" v-if="lang=='en'">
-            <select class="city" :class="getClasses" @change="change(index)" v-model="index">
-                <option v-for="(item,index) in options" :key="index" :value="index">{{show(p_lang, item)}}</option>
+            <select class="city" :class="getClasses" @change="change(selected_city_id)" v-model="selected_city_id">
+                <option v-for="(item,selected_city_id) in options" :key="selected_city_id" :value="selected_city_id">{{show(p_lang, item)}}</option>
             </select>
           <label v-if="styles=='underline'">縣市</label>
         </div>
@@ -61,8 +61,6 @@ export default {
       p_msg: '',
       selected_city_id: 0,
       selected_dist_id: 0,
-      index: 0,
-      sub_index: 0,
       options: [],
       districts: []
     }
@@ -87,11 +85,16 @@ export default {
       // check is string a city name
       let _k = this.isEn(_arr[0]) ? 'en' : 'zh'
       this.selected_city_id = this.options.map(function(o){ return o[_k] }).indexOf(_arr[0]);
-      if(this.selected_city_id === -1) this.p_msg = 'invalid city name'
-      else {
+      if(this.selected_city_id === -1){
+        this.selected_city_id = this.selected_dist_id = 0
+        this.p_msg = 'invalid city name ['+_arr[0]+'],'+_arr[1]
+      } else {
         this.districts = this.options[this.selected_city_id].districts
         this.selected_dist_id = this.districts.map(function(o){ return o[_k] }).indexOf(_arr[1]);
-        if(this.selected_dist_id === -1) this.p_msg = 'invalid district name'
+        if(this.selected_dist_id === -1){
+          this.selected_dist_id = 0
+          this.p_msg = 'invalid district name '+_arr[0]+',['+_arr[1]+']'
+        }
       }
     }
   },
@@ -103,12 +106,8 @@ export default {
       return (matches[0] === matches['input'])
     },
     show (_lang, item) {
-      switch (_lang) {
-        case 'zh':
-          return item.zh
-        case 'en':
-          return item.en
-      }
+      if(Object.prototype.hasOwnProperty.call(item,_lang)) return item[_lang]
+      else return item['zh']
     },
     change () {
       this.selected_dist_id = 0
@@ -121,16 +120,16 @@ export default {
       if (this.json) {
         str = JSON.stringify({
           zh: {
-            'city': this.show('zh', this.options[this.index]),
-            'dist': this.show('zh', this.districts[this.sub_index])
+            'city': this.show('zh', this.options[this.selected_city_id]),
+            'dist': this.show('zh', this.districts[this.selected_dist_id])
           },
           en: {
-            'city': this.show('en', this.options[this.index]),
-            'dist': this.show('en', this.districts[this.sub_index])
+            'city': this.show('en', this.options[this.selected_city_id]),
+            'dist': this.show('en', this.districts[this.selected_dist_id])
           }
         })
       } else {
-        let a = [this.show('zh', this.options[this.index]), this.show('zh', this.districts[this.sub_index])]
+        let a = [this.show('zh', this.options[this.selected_city_id]), this.show('zh', this.districts[this.selected_dist_id])]
         let sep = ''
         if (this.p_lang === 'en') {
           sep = ','
