@@ -35,7 +35,7 @@ export default {
       type: String,
       required: true
     },
-    countryCode: {
+    country_code: {
       type: String
     },
     lang: {
@@ -56,7 +56,7 @@ export default {
   },
   data () {
     return {
-      p_countryCode: 'zh-hk',
+      p_country_code: 'zh-hk',
       p_lang: 'zh',
       p_msg: '',
       selected_city_id: 0,
@@ -66,9 +66,9 @@ export default {
     }
   },
   created () {
-    this.p_countryCode = this.countryCode || this.p_countryCode
+    this.p_country_code = this.country_code || this.p_country_code
     this.p_lang = this.lang || this.p_lang
-    switch (this.p_countryCode) {
+    switch (this.p_country_code) {
       case 'zh-tw':
         this.options = twJson
         break

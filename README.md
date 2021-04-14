@@ -52,7 +52,7 @@ name屬性為必設屬性。POST可用name設定的值取得結果。前端可�
 
 預設
 
-- countryCode: 'zh-hk'  // 香港
+- country_code: 'zh-hk'  // 香港
 - lang: 'zh'            // 中文
 - styles: 'block'       // block
 - size: 'normal'        // 普通
@@ -64,15 +64,15 @@ name屬性為必設屬性。POST可用name設定的值取得結果。前端可�
 
 ## Props
 
-### countryCode
+### country_code
 
 地址格式
 
 values: zh-hk(default) | zh-tw
 
 ```html
-<vue-address name="addr" countryCode="zh-hk"></vue-address>
-<vue-district name="dist" countryCode="zh-hk"></vue-district>
+<vue-address name="addr" country_code="zh-hk"></vue-address>
+<vue-district name="dist" country_code="zh-hk"></vue-district>
 ```
 
 ### json
@@ -102,19 +102,16 @@ vue-address 的回傳
 
 ```html
 <!-- 輸入內容含有中文時 -->
-<input type="hidden" id="addr" name="addr" value="臺北市中正區北平西路3號">
-<!-- 輸入內容為英文時 -->
-<input type="hidden" id="addr" name="addr" value="No 3, Beiping W Road,Zhongzheng Dist.,Taipei City">
-```
-
-vue-address 設定 json 時的回傳
-
-```html
-<!-- 輸入內容含有中文時 -->
 <input type="hidden" id="addr" name="addr" value='{"city":"臺北市","dist":"中正區","street":"北平西路","lane":"","ally":"","no":"3","floor":"","room":""}'>
+<input type="hidden" id="addr_text" name="addr_text" value="臺北市中正區北平西路3號">
 <!-- 輸入內容為英文時 -->
 <input type="hidden" id="addr" name="addr" value='{"city":"Taipei City","dist":"Zhongzheng Dist.","street":"Beiping W. Rd.","lane":"","ally":"","no":"3","floor":"","room":""}'>
+<input type="hidden" id="addr_text" name="addr_text" value="No 3, Beiping W Road,Zhongzheng Dist.,Taipei City">
 ```
+
+vue-address 設定 json 時的回傳(Deprecated)
+
+同時回傳字串及json格式，取消json參數
 
 ### lang
 
@@ -170,7 +167,7 @@ block: 輸入框名稱位於輸入框的提示語中
 
 設定地址
 
-<vue-address name="address" class="no-gutters" size="lg" styles="block" countryCode="zh-tw" json value='{"city":"香港","dist":"香港仔","street":"港灣道12號","building":"灣仔政府大樓","floor":"","block":"","room":""}'></vue-address>
+<vue-address name="address" class="no-gutters" size="lg" styles="block" country_code="zh-tw" json value='{"city":"香港","dist":"香港仔","street":"港灣道12號","building":"灣仔政府大樓","floor":"","block":"","room":""}'></vue-address>
 <vue-district name="dist" value="香港,香港仔"></vue-district>
 ```
 

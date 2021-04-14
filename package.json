@@ -1,6 +1,6 @@
 {
   "name": "@cuby/vue-address",
-  "version": "0.1.36",
+  "version": "0.1.39",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
